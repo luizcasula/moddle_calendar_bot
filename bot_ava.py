@@ -12,6 +12,8 @@ import platform
 
 DATA_PATH = r'C:\Users\lacft\Documents\Python Projects\AVA bot\moddle_calendar_bot\data'
 
+
+
 class Bot:
     
     def __init__(self, username, password):
@@ -26,6 +28,8 @@ class Bot:
                 if len(files) == 1:
                     return os.path.join(file)
                 else:
+                    #delete older file
+                    #return new file
                     print(os.path.join(file))
 
     def getFile(self):
@@ -44,10 +48,11 @@ class Bot:
         driver.find_element_by_xpath('//*[@id="id_period_timeperiod_recentupcoming"]').click()
         sleep(2)
         driver.find_element_by_xpath('//*[@id="id_export"]').click()
-        
+        sleep(5)
+        driver.quit()
 
     def readIcsFile(self, file_name):
-        file = open('data/{}'.format(file_name),'rb')
+        file = open('data/{}.ics'.format(file_name),'rb')
         calendar = Calendar.from_ical(file.read())
         for component in calendar.walk():
             if component.name == "VEVENT":
@@ -72,14 +77,10 @@ class Bot:
         driver.find_element_by_xpath('//*[@id="id_generateurl"]').click()
         sleep(2)
         link = driver.find_element_by_xpath('//*[@id="region-main"]/div/div/div').text
+        driver.quit()
         return link
 
-    #def buildFileName(self):
-    #    local_time = time.localtime()
-    #    file_name = "{0}-{1}-{2}-{3}-{4}".format(local_time.tm_year, local_time.tm_mon, local_time.tm_mday, local_time.tm_hour, local_time.tm_sec)
-    #    print(file_name)
-
-    def getFileName(self):
+    def buildFileName(self):
         if platform.system == 'Windows':
             return os.path.getctime(DATA_PATH)
         else:
@@ -90,29 +91,31 @@ class Bot:
             return stat.st_mtime
                   
     def renameFile(self):
-        file_name = self.getFileName()
+        file_name = self.buildFileName()
         sleep(3)
         os.rename(r'{}\icalexport.ics'.format(DATA_PATH), r'{}\{}.ics'.format(DATA_PATH, file_name))
+        return file_name
         
     def deleteFile(self):
         file_name = '1587885349.6933017.ics'
         os.remove(r'{}\{}'.format(DATA_PATH, file_name))
-            
+
+    def convertTime(self, name):
+        #name = self.getFileName()
+        print(name)
+        #print(datetime.fromtimestamp(name).strftime('%Y-%m-%d %H:%M:%S'))
+        print(datetime.fromtimestamp(name))
+
+    #def calculateTime(self):
+        
+
+
 bot = Bot(secret.USERNAME, secret.PASSWORD)
+
 #bot.getFile()
-#bot.readIcsFile()
-#bot.getFileName()
-#bot.renameFile()
-#bot.deleteFile()
+#name = bot.getFilesInPath()
+#file_name = bot.renameFile()
+#bot.getFilesInPath()
+#bot.readIcsFile(file_name)
 
-
-bot.getFile()
-name = bot.getFilesInPath()
-bot.renameFile()
-new_name = bot.getFilesInPath()
-bot.readIcsFile(new_name)
-
-
-
-
-
+bot.convertTime(1587941903.5602446)
