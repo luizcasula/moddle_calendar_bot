@@ -65,9 +65,8 @@ class Bot:
                     print(os.path.join(file))
                     if(len(files) == 1):
                         return os.path.join(file)
-                    #else:
-                        #delete older file
-                        #return newest file
+                    else:
+                        self.deleteFile(file)    
                     
     
     def readIcsFile(self, file_name):
