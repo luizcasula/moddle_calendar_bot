@@ -1,17 +1,18 @@
 from selenium import webdriver
 from time import sleep
-from icalendar import Calendar, Event
+from icalendar import Calendar, Event, vDatetime
 from datetime import datetime
 from pytz import UTC
 import os
 import time
 import secret
 import platform
+import json
 
 
-DATA_PATH = r'C:\Users\lacft\Documents\Python Projects\AVA bot\moddle_calendar_bot\data'
+DATA_PATH = r'C:\Users\lacft\Documents\moddle_calendar_bot\data'
 
-
+data = {}
 
 class Bot:
 
@@ -69,21 +70,34 @@ class Bot:
                         self.deleteFile(file)    
                     
     
+    data['calendar'] = []
     def readIcsFile(self, file_name):
-        try:
+        # try:
             file = open('data/{}'.format(file_name),'rb')
             calendar = Calendar.from_ical(file.read())
             print('file {} opened'.format(file_name))
             for component in calendar.walk():
                 if component.name == "VEVENT":
-                    print(component.get('summary'))
-                    print(component.get('categories'))
+                    print(component['dtstart'])
+                    # data['calendar'].append({
+                    #     'name': '{}'.format(component.get('summary')),
+                    #     'description': '{}'.format(component.get('description')),
+                    #     'dateStart':  '{}'.format(vDatetime.from_ical({}.format(component.get('dtstart')))),
+                    #     'dateEnd':  '{}'.format(vDatetime.from_ical({}.format(component.get('dtend')))),
+                    #     'categorie':  '{}'.format(component.get('categories'))
+                    # })
+                    # self.writeJsonData()
                     #print(component.get('description'))
             file.close()
             print('file {} closed'.format(file_name))
-        except:
-            print('read file error')
+        # except:
+            # print('read file error')
 
+    def writeJsonData(self):
+        with open('data.json', 'w') as jsonFile:
+            json.dump(data, jsonFile)
+            
+    
     
 
     def buildFileName(self):
@@ -124,7 +138,7 @@ class Bot:
         print(delta)
         print(delta.total_seconds())
 
-        if(delta.total_seconds() < 20):
+        if(delta.total_seconds() < 20000):
             return True
         else:
             return False
